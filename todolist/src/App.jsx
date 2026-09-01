@@ -1,22 +1,44 @@
-import { useState,useEffect } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
-
+import { useState, useEffect } from "react";
+import "./App.css";
+import axios from "axios";
 function App() {
-  const [count, setCount] = useState(0)
-  const [todos,setTodos] = useState([])
-  useEffect(()=>{
+  const [todos, setTodos] = useState([]);
+  const baseURL = 'https://6a9463640e895b145e5f6c44.mockapi.io/todos'
+  async function fetchTodo() {
+    try {
+      const response = await axios.get(
+        baseURL
+      );
+      setTodos(response.data);
+    } catch (error) {
+      console.log("error", error);
+    }
+  }
 
-  },[])
+  async function deleteTodo(id) {
+    try {
+      await axios.delete(`${baseURL}/${id}`);
+      setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+    } catch (error) {
+      console.log("error", error);
+    }
+  }
 
+  useEffect(() => {
+    fetchTodo();
+  }, []);
 
   return (
     <>
-     todos.map((todo)=>())
+      {todos.map((todo) => (
+        <div key={todo.id}>
+          {todo.id} {todo.name} {todo.status}
+          <button>Edit</button>
+          <button onClick={() => deleteTodo(todo.id)}>Delete</button>
+        </div>
+      ))}
     </>
-  )
+  );
 }
 
-export default App
+export default App;
